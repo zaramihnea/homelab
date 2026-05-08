@@ -5,6 +5,7 @@
 secrets/
 .env
 .env.*
+.claude
 
 # Editor
 .vscode/

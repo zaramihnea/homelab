@@ -1,25 +1,35 @@
-defaultPodOptions:
-  serviceAccountName: kubernetes-mcp
+ingress:
+  enabled: false
 
-controllers:
-  kubernetes-mcp:
-    containers:
-      app:
-        image:
-          repository: ghcr.io/manusa/kubernetes-mcp-server
-          tag: latest
-          pullPolicy: Always
-        resources:
-          requests:
-            cpu: 5m
-            memory: 64Mi
-          limits:
-            cpu: 100m
-            memory: 256Mi
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
 
 service:
-  app:
-    controller: kubernetes-mcp
-    ports:
-      http:
-        port: 8080
+  port: 8080
+
+httpRoute:
+  enabled: true
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: traefik-gateway
+      namespace: traefik
+      sectionName: https
+  hostnames:
+    - kubernetes-mcp.home.zaramihnea.dev
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 256Mi
