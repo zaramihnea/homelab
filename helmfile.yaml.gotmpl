@@ -154,3 +154,13 @@ releases:
     version: "0.1.0"
     values:
       - {{ .Values.valuesDir }}/kubernetes-mcp/values.yaml
+
+  - name: dav-mcp
+    labels:
+      domain: mcp
+      component: dav-mcp
+    namespace: mcp
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/dav-mcp/values.yaml

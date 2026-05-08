@@ -25,6 +25,7 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
 | [Grafana MCP](https://github.com/grafana/mcp-grafana) | MCP server for Grafana |
 | [Kubernetes MCP](https://github.com/manusa/kubernetes-mcp-server) | MCP server for Kubernetes |
+| [dav-mcp](https://github.com/PhilflowIO/dav-mcp) | MCP server for CalDAV calendars, CardDAV contacts, and VTODO tasks |
 
 ## Structure
 
@@ -58,19 +59,20 @@ All secrets are stored in Kubernetes and referenced by name — no secret values
 | `grafana-smtp` | Grafana SMTP password |
 | `homarr-secret` | Homarr encryption key |
 | `grafana-mcp-apikey` | Grafana API key for the MCP server |
+| `dav-mcp-secret` | CalDAV/CardDAV credentials and MCP bearer token |
 
 ## Usage
 
 ```bash
 # Deploy everything
-helmfile apply
+helmfile -e local apply
 
 # Deploy only infra components
-helmfile apply -l domain=infra
+helmfile -e local apply -l domain=infra
 
 # Deploy only apps
-helmfile apply -l domain=apps
+helmfile -e local apply -l domain=apps
 
 # Deploy a single release
-helmfile apply -l component=jellyfin
+helmfile -e local apply -l component=jellyfin
 ```
