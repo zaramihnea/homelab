@@ -1,0 +1,30 @@
+controllers:
+  grafana-mcp:
+    containers:
+      app:
+        image:
+          repository: ghcr.io/grafana/mcp-grafana
+          tag: latest
+          pullPolicy: Always
+        args: ["--transport", "sse"]
+        env:
+          GRAFANA_URL: http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local
+          GRAFANA_API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: grafana-mcp-apikey
+                key: api-key
+        resources:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+service:
+  app:
+    controller: grafana-mcp
+    ports:
+      http:
+        port: 3000

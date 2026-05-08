@@ -23,6 +23,8 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 | [Homarr](https://homarr.dev/) | Dashboard |
 | [Scrypted](https://www.scrypted.app/) | Home automation / camera hub |
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
+| [Grafana MCP](https://github.com/grafana/mcp-grafana) | MCP server for Grafana |
+| [Kubernetes MCP](https://github.com/manusa/kubernetes-mcp-server) | MCP server for Kubernetes |
 
 ## Structure
 
@@ -55,6 +57,7 @@ All secrets are stored in Kubernetes and referenced by name — no secret values
 | `grafana-admin` | Grafana admin credentials |
 | `grafana-smtp` | Grafana SMTP password |
 | `homarr-secret` | Homarr encryption key |
+| `grafana-mcp-apikey` | Grafana API key for the MCP server |
 
 ## Usage
 

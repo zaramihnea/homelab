@@ -134,3 +134,23 @@ releases:
     version: "~4.6.0"
     values:
       - {{ .Values.valuesDir }}/homarr/values.yaml
+
+  - name: grafana-mcp
+    labels:
+      domain: mcp
+      component: grafana-mcp
+    namespace: mcp
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/grafana-mcp/values.yaml
+
+  - name: kubernetes-mcp
+    labels:
+      domain: mcp
+      component: kubernetes-mcp
+    namespace: mcp
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/kubernetes-mcp/values.yaml
