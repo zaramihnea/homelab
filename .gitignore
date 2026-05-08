@@ -1,0 +1,21 @@
+# Local overrides
+*.local.yaml
+*.secret.yaml
+*.secrets.yaml
+secrets/
+.env
+.env.*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Helm
+charts/
+.helmfile-cache/

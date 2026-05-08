@@ -1,0 +1,37 @@
+controllers:
+  n8n:
+    containers:
+      app:
+        image:
+          repository: docker.n8n.io/n8nio/n8n
+          tag: 2.20.5
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 5m
+            memory: 256Mi
+          limits:
+            cpu: 100m
+            memory: 1Gi
+        env:
+          TZ: Europe/Bucharest
+          N8N_HOST: "0.0.0.0"
+          N8N_SECURE_COOKIE: "false"
+          NODE_ENV: production
+          WEBHOOK_URL: "https://n8n.home.zaramihnea.dev/"
+          N8N_PROXY_HOPS: "1"
+
+service:
+  app:
+    controller: n8n
+    ports:
+      http:
+        port: 5678
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: n8n-data
+    globalMounts:
+      - path: /home/node/.n8n

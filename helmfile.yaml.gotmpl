@@ -1,0 +1,136 @@
+environments:
+  local:
+    values:
+      - environments/local/env.yaml
+
+---
+
+helmDefaults:
+  createNamespace: true
+  wait: true
+  timeout: 600
+
+repositories:
+  - name: traefik
+    url: https://traefik.github.io/charts
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: bjw-s
+    url: https://bjw-s-labs.github.io/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: openebs
+    url: https://openebs.github.io/openebs
+
+releases:
+  - name: cert-manager
+    labels:
+      domain: infra
+      component: cert-manager
+    namespace: cert-manager
+    chart: jetstack/cert-manager
+    version: "~1.20.0"
+    values:
+      - {{ .Values.valuesDir }}/cert-manager/values.yaml
+
+  - name: traefik
+    labels:
+      domain: infra
+      component: traefik
+    namespace: traefik
+    chart: traefik/traefik
+    version: "~39.0.0"
+    values:
+      - {{ .Values.valuesDir }}/traefik/values.yaml
+
+  - name: openebs
+    labels:
+      domain: infra
+      component: openebs
+    namespace: openebs
+    chart: openebs/openebs
+    version: "4.4.0"
+    values:
+      - {{ .Values.valuesDir }}/openebs/values.yaml
+
+  - name: kube-prometheus-stack
+    labels:
+      domain: infra
+      component: kube-prometheus-stack
+    namespace: monitoring
+    chart: prometheus-community/kube-prometheus-stack
+    version: "~83.6.0"
+    values:
+      - {{ .Values.valuesDir }}/kube-prometheus-stack/values.yaml
+
+  - name: loki
+    labels:
+      domain: infra
+      component: loki
+    namespace: monitoring
+    chart: grafana/loki
+    version: "~6.55.0"
+    values:
+      - {{ .Values.valuesDir }}/loki/values.yaml
+
+  - name: alloy
+    labels:
+      domain: infra
+      component: alloy
+    namespace: monitoring
+    chart: grafana/alloy
+    version: "~1.7.0"
+    values:
+      - {{ .Values.valuesDir }}/alloy/values.yaml
+
+  - name: adguard
+    labels:
+      domain: infra
+      component: adguard
+    namespace: adguard
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/adguard/values.yaml
+
+  - name: n8n
+    labels:
+      domain: apps
+      component: n8n
+    namespace: n8n
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/n8n/values.yaml
+
+  - name: scrypted
+    labels:
+      domain: apps
+      component: scrypted
+    namespace: scrypted
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/scrypted/values.yaml
+
+  - name: jellyfin
+    labels:
+      domain: apps
+      component: jellyfin
+    namespace: jellyfin
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/jellyfin/values.yaml
+
+  - name: homarr
+    labels:
+      domain: apps
+      component: homarr
+    namespace: homarr
+    chart: bjw-s/app-template
+    version: "~4.6.0"
+    values:
+      - {{ .Values.valuesDir }}/homarr/values.yaml

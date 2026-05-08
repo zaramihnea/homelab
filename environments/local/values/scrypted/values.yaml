@@ -1,0 +1,56 @@
+controllers:
+  scrypted:
+    containers:
+      app:
+        image:
+          repository: ghcr.io/koush/scrypted
+          tag: v0.143.0
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 30m
+            memory: 512Mi
+          limits:
+            memory: 2Gi
+        env:
+          SCRYPTED_WEBHOOK_UPDATE: http://localhost:10444/v1/update
+          SCRYPTED_WEBHOOK_UPDATE_AUTHORIZATION: Bearer env_missing_fallback
+
+defaultPodOptions:
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/app: unconfined
+
+service:
+  app:
+    controller: scrypted
+    ports:
+      http:
+        port: 11080
+
+persistence:
+  volume:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: scrypted-volume
+    globalMounts:
+      - path: /server/volume
+  dbus:
+    enabled: true
+    type: hostPath
+    hostPath: /var/run/dbus
+    globalMounts:
+      - path: /var/run/dbus
+  avahi:
+    enabled: true
+    type: hostPath
+    hostPath: /var/run/avahi-daemon/socket
+    globalMounts:
+      - path: /var/run/avahi-daemon/socket
+  dri:
+    enabled: true
+    type: hostPath
+    hostPath: /dev/dri
+    globalMounts:
+      - path: /dev/dri

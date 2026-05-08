@@ -1,0 +1,36 @@
+controllers:
+  homarr:
+    containers:
+      app:
+        image:
+          repository: ghcr.io/homarr-labs/homarr
+          tag: v1.60.0
+          pullPolicy: IfNotPresent
+        env:
+          TZ: Europe/Bucharest
+          SECRET_ENCRYPTION_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: homarr-secret
+                key: SECRET_ENCRYPTION_KEY
+        resources:
+          requests:
+            cpu: 10m
+            memory: 256Mi
+          limits:
+            memory: 1Gi
+
+service:
+  app:
+    controller: homarr
+    ports:
+      http:
+        port: 7575
+
+persistence:
+  appdata:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: homarr-appdata
+    globalMounts:
+      - path: /appdata

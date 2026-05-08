@@ -1,0 +1,37 @@
+mcontrollers:w
+  jellyfin:
+    containers:
+      app:
+        image:
+          repository: jellyfin/jellyfin
+          tag: 10.11.8
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        env:
+          TZ: Europe/Bucharest
+
+service:
+  app:
+    controller: jellyfin
+    ports:
+      http:
+        port: 8096
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: jellyfin-config
+    globalMounts:
+      - path: /config
+  media:
+    enabled: true
+    type: hostPath
+    hostPath: /data/media
+    globalMounts:
+      - path: /media

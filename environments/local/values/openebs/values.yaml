@@ -1,0 +1,20 @@
+engines:
+  local:
+    lvm:
+      enabled: false
+    zfs:
+      enabled: false
+  replicated:
+    mayastor:
+      enabled: false
+
+localpv-provisioner:
+  hostpathClass:
+    basePath: /mnt/volumes/k3s/openebs/local
+
+# Disable built-in observability stack — we have our own
+loki:
+  enabled: false
+
+alloy:
+  enabled: false

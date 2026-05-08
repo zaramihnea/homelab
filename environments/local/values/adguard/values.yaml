@@ -1,0 +1,48 @@
+controllers:
+  adguard:
+    containers:
+      app:
+        image:
+          repository: adguard/adguardhome
+          tag: v0.107.74
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 5m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 1Gi
+        env:
+          TZ: Europe/Bucharest
+
+defaultPodOptions:
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+
+service:
+  app:
+    controller: adguard
+    ports:
+      http:
+        port: 8080
+      dns-tcp:
+        port: 53
+        protocol: TCP
+      dns-udp:
+        port: 53
+        protocol: UDP
+
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: adguard-config
+    globalMounts:
+      - path: /opt/adguardhome/conf
+  work:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: adguard-work
+    globalMounts:
+      - path: /opt/adguardhome/work

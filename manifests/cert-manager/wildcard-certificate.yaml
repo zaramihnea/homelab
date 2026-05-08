@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-home-tls
+  namespace: traefik
+spec:
+  secretName: wildcard-home-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.home.zaramihnea.dev"
+    - "home.zaramihnea.dev"

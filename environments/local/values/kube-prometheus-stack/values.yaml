@@ -1,0 +1,69 @@
+alertmanager:
+  enabled: false
+
+grafana:
+  admin:
+    existingSecret: grafana-admin
+    userKey: username
+    passwordKey: password
+  defaultDashboardsTimezone: Europe/Bucharest
+  defaultDashboardsEnabled: false
+  sidecar:
+    datasources:
+      alertmanager:
+        enabled: false
+  resources:
+    requests:
+      cpu: 5m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    existingClaim: grafana-data
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: smtp-relay.brevo.com:587
+      user: a89bd7001@smtp-brevo.com
+      password: $__file{/etc/secrets/grafana-smtp/password}
+      from_address: alerts@zaramihnea.dev
+      from_name: Homelab Alerts
+  extraSecretMounts:
+    - name: grafana-smtp
+      secretName: grafana-smtp
+      mountPath: /etc/secrets/grafana-smtp
+      readOnly: true
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki-gateway.monitoring.svc.cluster.local
+      access: proxy
+      isDefault: false
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    scrapeInterval: 20s
+    resources:
+      requests:
+        cpu: 10m
+        memory: 384Mi
+      limits:
+        cpu: 200m
+        memory: 1Gi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: openebs-hostpath
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 20Gi
+
+nodeExporter:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true
