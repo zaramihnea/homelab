@@ -6,6 +6,11 @@ serviceAccount:
 
 rbac:
   create: true
+  extraClusterRoleBindings:
+    - name: cluster-admin
+      roleRef:
+        name: cluster-admin
+        external: true
 
 service:
   port: 8080
