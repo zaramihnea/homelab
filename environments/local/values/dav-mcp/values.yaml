@@ -9,7 +9,65 @@ controllers:
         command:
           - sh
           - -c
-          - apk add --no-cache git && npx -y dav-mcp --http --port=3000
+          - |
+            set -e
+            apk add --no-cache git
+            npm install -g husky
+            npm install -g dav-mcp@3.0.7
+            DAV_MCP_DIR="$(npm root -g)/dav-mcp"
+            node - "$DAV_MCP_DIR" <<'NODE'
+            const fs = require('fs');
+            const path = require('path');
+            const root = process.argv[2];
+            const todoFilter = `const VTODO_FILTER = [{ "comp-filter": { _attributes: { name: "VCALENDAR" }, "comp-filter": { _attributes: { name: "VTODO" } } } }];`;
+            const replace = (file, replacements) => {
+              const full = path.join(root, file);
+              let text = fs.readFileSync(full, 'utf8');
+              for (const [from, to] of replacements) {
+                if (!text.includes(from)) throw new Error(`Patch target not found in ${file}`);
+                text = text.replace(from, to);
+              }
+              fs.writeFileSync(full, text);
+            };
+            replace('src/server-http.js', [
+              [`const app = express();`, `const app = express();\napp.set('trust proxy', 1);`],
+            ]);
+            replace('src/tools/index.js', [
+              [`// Todo Tools (VTODO)\nimport * as todoTools from './todos/index.js';`, `// Apple Reminders are not exposed: upgraded iCloud Reminders do not sync through CalDAV VTODO.\nconst appleRemindersNotSupported = {\n  name: 'apple_reminders_not_supported',\n  description: 'Apple Reminders do not work through this CalDAV MCP server. Do not create, read, update, or delete reminders here; modern iCloud Reminders use Apple private sync, not visible CalDAV VTODO. Use a Mac-side Reminders/Shortcuts/EventKit bridge instead.',\n  inputSchema: { type: 'object', properties: {}, required: [] },\n  handler: async () => ({\n    content: [{\n      type: 'text',\n      text: 'Apple Reminders are not supported by this dav-mcp CalDAV server. Calendar and Contacts tools work; Reminders need a Mac-side bridge using Reminders.app, Shortcuts, AppleScript, or EventKit.',\n    }],\n  }),\n};`],
+              [`  // ================================\n  // TODO TOOLS (7 tools)\n  // ================================\n  todoTools.listTodos,\n  todoTools.createTodo,\n  todoTools.updateTodoFields,\n  todoTools.updateTodoRaw,\n  todoTools.deleteTodo,\n  todoTools.todoQuery,\n  todoTools.todoMultiGet,`, `  // ================================\n  // REMINDERS STATUS\n  // ================================\n  appleRemindersNotSupported,`],
+            ]);
+            replace('src/tools/todos/list-todos.js', [
+              [`import { formatTodoList } from '../../formatters.js';`, `import { formatTodoList } from '../../formatters.js';\n${todoFilter}`],
+              [`const todos = await client.fetchTodos({ calendar });`, `const todos = await client.fetchCalendarObjects({ calendar, filters: VTODO_FILTER });`],
+            ]);
+            replace('src/tools/todos/todo-query.js', [
+              [`import { formatTodoList } from '../../formatters.js';`, `import { formatTodoList } from '../../formatters.js';\n${todoFilter}`],
+              [`const calendarTodos = await client.fetchTodos({ calendar });`, `const calendarTodos = await client.fetchCalendarObjects({ calendar, filters: VTODO_FILTER });`],
+            ]);
+            replace('src/utils/tool-helpers.js', [
+              [`const todos = await client.fetchTodos({ calendar });`, `const todos = await client.fetchCalendarObjects({ calendar, filters: [{ "comp-filter": { _attributes: { name: "VCALENDAR" }, "comp-filter": { _attributes: { name: "VTODO" } } } }] });`],
+            ]);
+            replace('src/tools/todos/create-todo.js', [
+              [`import { formatICalDate } from '../shared/helpers.js';`, `import { formatICalDate, findCalendarOrThrow } from '../shared/helpers.js';`],
+              [`const client = tsdavManager.getCalDavClient();`, `const client = tsdavManager.getCalDavClient();\n    const calendars = await client.fetchCalendars();\n    const calendar = findCalendarOrThrow(calendars, validated.calendar_url);`],
+              [`const uid = \`\${Date.now()}-\${Math.random().toString(36).substr(2, 9)}@tsdav-mcp\`;`, `const uid = globalThis.crypto.randomUUID().toUpperCase();`],
+              [`let vtodo = 'BEGIN:VCALENDAR\\r\\n';\n    vtodo += 'VERSION:2.0\\r\\n';\n    vtodo += 'PRODID:-//tsdav-mcp-server//NONSGML v1.2.0//EN\\r\\n';\n    vtodo += 'BEGIN:VTODO\\r\\n';\n    vtodo += \`UID:\${uid}\\r\\n\`;\n    vtodo += \`DTSTAMP:\${dtstamp}\\r\\n\`;`, `let vtodo = 'BEGIN:VCALENDAR\\r\\n';\n    vtodo += 'CALSCALE:GREGORIAN\\r\\n';\n    vtodo += 'PRODID:-//Apple Inc.//OpenClaw dav-mcp//EN\\r\\n';\n    vtodo += 'VERSION:2.0\\r\\n';\n    vtodo += 'BEGIN:VTODO\\r\\n';\n    vtodo += \`CREATED:\${dtstamp}\\r\\n\`;\n    vtodo += \`DTSTAMP:\${dtstamp}\\r\\n\`;\n    vtodo += \`LAST-MODIFIED:\${dtstamp}\\r\\n\`;\n    vtodo += 'SEQUENCE:0\\r\\n';\n    vtodo += \`UID:\${uid}\\r\\n\`;\n    vtodo += \`X-APPLE-SORT-ORDER:\${Math.floor(Date.now() / 1000)}\\r\\n\`;`],
+              [`const result = await client.createTodo({\n      calendar: { url: validated.calendar_url },`, `const result = await client.createCalendarObject({\n      calendar,`],
+              [`filename: \`\${Date.now()}.ics\`,`, `filename: \`\${uid}.ics\`,`],
+            ]);
+            replace('src/tools/todos/update-todo-fields.js', [
+              [`import { updateFields } from 'tsdav-utils';`, `import { updateFields } from 'tsdav-utils';\n${todoFilter}`],
+              [`const currentTodos = await client.fetchTodos({\n      calendar: { url: calendarUrl },\n      objectUrls: [validated.todo_url]\n    });`, `const currentTodos = await client.fetchCalendarObjects({\n      calendar: { url: calendarUrl },\n      objectUrls: [validated.todo_url],\n      filters: VTODO_FILTER\n    });`],
+              [`const updateResponse = await client.updateTodo({`, `const updateResponse = await client.updateCalendarObject({`],
+            ]);
+            replace('src/tools/todos/update-todo-raw.js', [
+              [`const result = await client.updateTodo({`, `const result = await client.updateCalendarObject({`],
+            ]);
+            replace('src/tools/todos/delete-todo.js', [
+              [`await client.deleteTodo({`, `await client.deleteCalendarObject({`],
+            ]);
+            NODE
+            dav-mcp --http --port=3000
         env:
           TZ: Europe/Bucharest
           CALDAV_SERVER_URL:
