@@ -19,7 +19,7 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 
 | App | Description |
 |---|---|
-| [Jellyfin](https://jellyfin.org/) | Media server |
+| [Jellyfin](https://jellyfin.org/) | Media server (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [n8n](https://n8n.io/) | Workflow automation (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Homarr](https://homarr.dev/) | Dashboard |
 | [Scrypted](https://www.scrypted.app/) | Home automation / camera hub |
@@ -42,8 +42,11 @@ manifests/
     http-route.yaml           # Gateway API HTTPRoute
     pvcs.yaml                 # PersistentVolumeClaims
   keda/
-    reference-grant.yaml      # ReferenceGrant allowing n8n HTTPRoute to reference keda services
+    reference-grant.yaml      # ReferenceGrant allowing n8n + jellyfin HTTPRoutes to reference keda services
   n8n/
+    interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
+    scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
+  jellyfin/
     interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
     scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
   cert-manager/

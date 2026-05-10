@@ -1,0 +1,17 @@
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  rules:
+    - hosts:
+        - jellyfin.home.zaramihnea.dev
+      paths:
+        - value: /
+  target:
+    service: jellyfin
+    port: 8096
+  scalingMetric:
+    concurrency:
+      targetValue: 10

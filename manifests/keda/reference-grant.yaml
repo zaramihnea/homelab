@@ -1,13 +1,16 @@
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
-  name: allow-n8n-httproute
+  name: allow-httproutes
   namespace: keda
 spec:
   from:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       namespace: n8n
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: jellyfin
   to:
     - group: ""
       kind: Service
