@@ -1,0 +1,19 @@
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: homarr
+  namespace: homarr
+spec:
+  rules:
+    - hosts:
+        - home.zaramihnea.dev
+      paths:
+        - value: /
+  target:
+    service: homarr
+    port: 7575
+  scalingMetric:
+    concurrency:
+      targetValue: 10
+  timeouts:
+    readiness: 120s

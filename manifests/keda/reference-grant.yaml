@@ -11,6 +11,9 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       namespace: jellyfin
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: homarr
   to:
     - group: ""
       kind: Service

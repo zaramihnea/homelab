@@ -21,7 +21,7 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 |---|---|
 | [Jellyfin](https://jellyfin.org/) | Media server (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [n8n](https://n8n.io/) | Workflow automation (scales to 0 when idle, wakes on HTTP request via KEDA) |
-| [Homarr](https://homarr.dev/) | Dashboard |
+| [Homarr](https://homarr.dev/) | Dashboard (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Scrypted](https://www.scrypted.app/) | Home automation / camera hub |
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
 | [Grafana MCP](https://github.com/grafana/mcp-grafana) | MCP server for Grafana |
@@ -42,11 +42,14 @@ manifests/
     http-route.yaml           # Gateway API HTTPRoute
     pvcs.yaml                 # PersistentVolumeClaims
   keda/
-    reference-grant.yaml      # ReferenceGrant allowing n8n + jellyfin HTTPRoutes to reference keda services
+    reference-grant.yaml      # ReferenceGrant allowing n8n, jellyfin + homarr HTTPRoutes to reference keda services
   n8n/
     interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
     scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
   jellyfin/
+    interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
+    scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
+  homarr/
     interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
     scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
   cert-manager/
