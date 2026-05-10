@@ -44,7 +44,8 @@ manifests/
   keda/
     reference-grant.yaml      # ReferenceGrant allowing n8n HTTPRoute to reference keda services
   n8n/
-    http-scaled-object.yaml   # HTTPScaledObject (scale-to-zero config)
+    interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
+    scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
   cert-manager/
     cluster-issuer.yaml       # Let's Encrypt ClusterIssuer
     wildcard-certificate.yaml # Wildcard TLS cert
