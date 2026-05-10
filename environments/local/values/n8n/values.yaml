@@ -20,6 +20,7 @@ controllers:
           NODE_ENV: production
           WEBHOOK_URL: "https://n8n.home.zaramihnea.dev/"
           N8N_PROXY_HOPS: "1"
+          N8N_RUNNERS_GRANT_TOKEN_TTL: "120"
 
 service:
   app:

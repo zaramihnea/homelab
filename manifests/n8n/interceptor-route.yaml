@@ -15,3 +15,5 @@ spec:
   scalingMetric:
     concurrency:
       targetValue: 10
+  timeouts:
+    readiness: 120s
