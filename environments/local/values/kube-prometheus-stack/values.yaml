@@ -44,8 +44,8 @@ grafana:
 
 prometheus:
   prometheusSpec:
-    retention: 15d
-    scrapeInterval: 20s
+    retention: 7d
+    scrapeInterval: 30s
     resources:
       requests:
         cpu: 10m
