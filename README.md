@@ -13,13 +13,14 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 | Storage | OpenEBS hostpath |
 | Monitoring | Prometheus + Grafana + Loki + Alloy |
 | DNS | AdGuard Home |
+| Autoscaling | KEDA + KEDA HTTP Add-on |
 
 ## Apps
 
 | App | Description |
 |---|---|
 | [Jellyfin](https://jellyfin.org/) | Media server |
-| [n8n](https://n8n.io/) | Workflow automation |
+| [n8n](https://n8n.io/) | Workflow automation (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Homarr](https://homarr.dev/) | Dashboard |
 | [Scrypted](https://www.scrypted.app/) | Home automation / camera hub |
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
@@ -40,6 +41,10 @@ manifests/
   <app>/
     http-route.yaml           # Gateway API HTTPRoute
     pvcs.yaml                 # PersistentVolumeClaims
+  keda/
+    reference-grant.yaml      # ReferenceGrant allowing n8n HTTPRoute to reference keda services
+  n8n/
+    http-scaled-object.yaml   # HTTPScaledObject (scale-to-zero config)
   cert-manager/
     cluster-issuer.yaml       # Let's Encrypt ClusterIssuer
     wildcard-certificate.yaml # Wildcard TLS cert

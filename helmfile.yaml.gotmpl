@@ -23,6 +23,8 @@ repositories:
     url: https://grafana.github.io/helm-charts
   - name: openebs
     url: https://openebs.github.io/openebs
+  - name: kedacore
+    url: https://kedacore.github.io/charts
 
 releases:
   - name: cert-manager
@@ -54,6 +56,26 @@ releases:
     version: "4.4.0"
     values:
       - {{ .Values.valuesDir }}/openebs/values.yaml
+
+  - name: keda
+    labels:
+      domain: infra
+      component: keda
+    namespace: keda
+    chart: kedacore/keda
+    version: "~2.19.0"
+    values:
+      - {{ .Values.valuesDir }}/keda/values.yaml
+
+  - name: keda-http-addon
+    labels:
+      domain: infra
+      component: keda-http-addon
+    namespace: keda
+    chart: kedacore/keda-add-ons-http
+    version: "~0.14.0"
+    values:
+      - {{ .Values.valuesDir }}/keda-http-addon/values.yaml
 
   - name: kube-prometheus-stack
     labels:
