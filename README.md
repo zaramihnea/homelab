@@ -26,7 +26,7 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
 | [Grafana MCP](https://github.com/grafana/mcp-grafana) | MCP server for Grafana |
 | [Kubernetes MCP](https://github.com/manusa/kubernetes-mcp-server) | MCP server for Kubernetes |
-| [dav-mcp](https://github.com/PhilflowIO/dav-mcp) | MCP server for CalDAV calendars, CardDAV contacts, and VTODO tasks |
+| [iCloud MCP](https://github.com/adamzaidi/icloud-mcp) | MCP server for iCloud Mail, Calendar, and Contacts |
 
 ## Structure
 
@@ -71,7 +71,7 @@ All secrets are stored in Kubernetes and referenced by name — no secret values
 | `grafana-smtp` | Grafana SMTP password |
 | `homarr-secret` | Homarr encryption key |
 | `grafana-mcp-apikey` | Grafana API key for the MCP server |
-| `dav-mcp-secret` | CalDAV/CardDAV credentials and MCP bearer token |
+| `icloud-mcp-secret` | iCloud MCP account credentials and MCP bearer token |
 
 ## Usage
 

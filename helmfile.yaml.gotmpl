@@ -177,12 +177,12 @@ releases:
     values:
       - {{ .Values.valuesDir }}/kubernetes-mcp/values.yaml
 
-  - name: dav-mcp
+  - name: icloud-mcp
     labels:
       domain: mcp
-      component: dav-mcp
+      component: icloud-mcp
     namespace: mcp
     chart: bjw-s/app-template
     version: "~4.6.0"
     values:
-      - {{ .Values.valuesDir }}/dav-mcp/values.yaml
+      - {{ .Values.valuesDir }}/icloud-mcp/values.yaml
