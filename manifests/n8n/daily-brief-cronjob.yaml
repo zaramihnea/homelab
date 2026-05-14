@@ -4,6 +4,7 @@ metadata:
   name: n8n-daily-brief-trigger
   namespace: n8n
 spec:
+  suspend: true
   schedule: "0 7 * * *"
   timeZone: Europe/Bucharest
   concurrencyPolicy: Forbid
