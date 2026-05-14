@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: n8n-daily-brief-trigger
+  namespace: n8n
+spec:
+  schedule: "0 7 * * *"
+  timeZone: Europe/Bucharest
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: trigger
+              image: curlimages/curl:8.17.0
+              imagePullPolicy: IfNotPresent
+              args:
+                - --fail
+                - --silent
+                - --show-error
+                - --request
+                - POST
+                - --header
+                - "Content-Type: application/json"
+                - --data
+                - '{"source":"kubernetes-cron","brief":"daily"}'
+                - "http://n8n.n8n.svc.cluster.local:5678/webhook/daily-brief-openclaw"

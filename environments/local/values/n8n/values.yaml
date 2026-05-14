@@ -21,6 +21,13 @@ controllers:
           WEBHOOK_URL: "https://n8n.home.zaramihnea.dev/"
           N8N_PROXY_HOPS: "1"
           N8N_RUNNERS_GRANT_TOKEN_TTL: "120"
+          OPENCLAW_GATEWAY_URL: "ws://192.168.0.12:18789"
+          OPENCLAW_DAILY_BRIEF_SESSION_KEY: "agent:main:n8n-daily-brief"
+          OPENCLAW_GATEWAY_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: openclaw-gateway
+                key: token
 
 service:
   app:

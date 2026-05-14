@@ -71,6 +71,7 @@ All secrets are stored in Kubernetes and referenced by name — no secret values
 | `homarr-secret` | Homarr encryption key |
 | `grafana-mcp-apikey` | Grafana API key for the MCP server |
 | `icloud-mcp-secret` | iCloud MCP account credentials and MCP bearer token |
+| `openclaw-gateway` | n8n daily brief workflow access to the OpenClaw Gateway |
 
 ## Usage
 
