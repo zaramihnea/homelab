@@ -7,9 +7,6 @@ spec:
   from:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      namespace: n8n
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
       namespace: jellyfin
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
