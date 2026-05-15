@@ -176,13 +176,3 @@ releases:
     version: "0.1.0"
     values:
       - {{ .Values.valuesDir }}/kubernetes-mcp/values.yaml
-
-  - name: icloud-mcp
-    labels:
-      domain: mcp
-      component: icloud-mcp
-    namespace: mcp
-    chart: bjw-s/app-template
-    version: "~4.6.0"
-    values:
-      - {{ .Values.valuesDir }}/icloud-mcp/values.yaml
