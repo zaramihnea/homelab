@@ -20,7 +20,7 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 | App | Description |
 |---|---|
 | [Jellyfin](https://jellyfin.org/) | Media server (scales to 0 when idle, wakes on HTTP request via KEDA) |
-| [n8n](https://n8n.io/) | Workflow automation with instance-level MCP access |
+| [n8n](https://n8n.io/) | Workflow automation with MCP access (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Homarr](https://homarr.dev/) | Dashboard (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Scrypted](https://www.scrypted.app/) | Home automation / camera hub |
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
@@ -30,32 +30,49 @@ Kubernetes homelab running on a single-node k3s cluster. Deployed with [Helmfile
 ## Structure
 
 ```
-helmfile.yaml.gotmpl          # Root helmfile (all releases)
+helmfile.yaml.gotmpl              # Root helmfile (all releases)
 environments/
   local/
-    env.yaml                  # Environment variables (domain, server IP)
+    env.yaml                      # Environment variables (domain, server IP)
     values/
-      <chart>/values.yaml     # Per-release Helm values
+      <chart>/values.yaml         # Per-release Helm values
 manifests/
-  <app>/
-    http-route.yaml           # Gateway API HTTPRoute
-    pvcs.yaml                 # PersistentVolumeClaims
-  keda/
-    reference-grant.yaml      # ReferenceGrant allowing jellyfin + homarr HTTPRoutes to reference keda services
-  n8n/
-    http-route.yaml           # Gateway API HTTPRoute routed directly to n8n service
-  jellyfin/
-    interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
-    scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
-  homarr/
-    interceptor-route.yaml    # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
-    scaled-object.yaml        # ScaledObject (min 0, max 1, 10 min cooldown)
-  cert-manager/
-    cluster-issuer.yaml       # Let's Encrypt ClusterIssuer
-    wildcard-certificate.yaml # Wildcard TLS cert
   traefik/
-    gateway.yaml              # Gateway resource
-    http-redirect.yaml        # HTTP → HTTPS redirect
+    gateway.yaml                  # Gateway resource
+    http-redirect.yaml            # HTTP → HTTPS redirect
+  cert-manager/
+    cluster-issuer.yaml           # Let's Encrypt ClusterIssuer
+    wildcard-certificate.yaml     # Wildcard TLS cert
+  keda/
+    reference-grant.yaml          # ReferenceGrant allowing HTTPRoutes to reference KEDA services
+  jellyfin/
+    http-route.yaml               # Gateway API HTTPRoute
+    interceptor-route.yaml        # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
+    scaled-object.yaml            # ScaledObject (min 0, max 1, 10 min cooldown)
+    pvcs.yaml                     # PersistentVolumeClaims
+  n8n/
+    http-route.yaml               # Gateway API HTTPRoute
+    interceptor-route.yaml        # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
+    scaled-object.yaml            # ScaledObject (min 0, max 1, 10 min cooldown)
+    pvcs.yaml                     # PersistentVolumeClaims
+    daily-brief-cronjob.yaml      # CronJob that POSTs to the daily brief webhook at 07:00 EET
+  homarr/
+    http-route.yaml               # Gateway API HTTPRoute
+    interceptor-route.yaml        # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
+    scaled-object.yaml            # ScaledObject (min 0, max 1, 10 min cooldown)
+    pvc.yaml                      # PersistentVolumeClaim
+  adguard/
+    http-route.yaml               # Gateway API HTTPRoute
+    pvcs.yaml                     # PersistentVolumeClaims
+  scrypted/
+    http-route.yaml               # Gateway API HTTPRoute
+    pvcs.yaml                     # PersistentVolumeClaims
+  monitoring/
+    http-route.yaml               # Gateway API HTTPRoute (Grafana)
+    pvcs.yaml                     # PersistentVolumeClaims
+    dashboard-homelab.yaml        # Grafana dashboard ConfigMap
+  mcp/
+    http-route.yaml               # Gateway API HTTPRoute (MCP servers)
 ```
 
 ## Secrets
