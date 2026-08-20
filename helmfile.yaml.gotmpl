@@ -21,6 +21,8 @@ repositories:
     url: https://prometheus-community.github.io/helm-charts
   - name: grafana
     url: https://grafana.github.io/helm-charts
+  - name: grafana-community
+    url: https://grafana-community.github.io/helm-charts
   - name: openebs
     url: https://openebs.github.io/openebs
   - name: kedacore
@@ -33,7 +35,7 @@ releases:
       component: cert-manager
     namespace: cert-manager
     chart: jetstack/cert-manager
-    version: "~1.20.0"
+    version: "1.21.1"
     values:
       - {{ .Values.valuesDir }}/cert-manager/values.yaml
 
@@ -43,7 +45,7 @@ releases:
       component: traefik
     namespace: traefik
     chart: traefik/traefik
-    version: "~39.0.0"
+    version: "41.2.0"
     values:
       - {{ .Values.valuesDir }}/traefik/values.yaml
 
@@ -53,7 +55,7 @@ releases:
       component: openebs
     namespace: openebs
     chart: openebs/openebs
-    version: "4.4.0"
+    version: "4.5.1"
     values:
       - {{ .Values.valuesDir }}/openebs/values.yaml
 
@@ -63,7 +65,7 @@ releases:
       component: keda
     namespace: keda
     chart: kedacore/keda
-    version: "~2.19.0"
+    version: "2.20.2"
     values:
       - {{ .Values.valuesDir }}/keda/values.yaml
 
@@ -73,7 +75,7 @@ releases:
       component: keda-http-addon
     namespace: keda
     chart: kedacore/keda-add-ons-http
-    version: "~0.14.0"
+    version: "0.15.0"
     values:
       - {{ .Values.valuesDir }}/keda-http-addon/values.yaml
 
@@ -83,7 +85,7 @@ releases:
       component: kube-prometheus-stack
     namespace: monitoring
     chart: prometheus-community/kube-prometheus-stack
-    version: "~84.5.0"
+    version: "88.5.0"
     values:
       - {{ .Values.valuesDir }}/kube-prometheus-stack/values.yaml
 
@@ -92,8 +94,8 @@ releases:
       domain: infra
       component: loki
     namespace: monitoring
-    chart: grafana/loki
-    version: "~6.55.0"
+    chart: grafana-community/loki
+    version: "18.9.1"
     values:
       - {{ .Values.valuesDir }}/loki/values.yaml
 
@@ -103,7 +105,7 @@ releases:
       component: alloy
     namespace: monitoring
     chart: grafana/alloy
-    version: "~1.7.0"
+    version: "1.11.1"
     values:
       - {{ .Values.valuesDir }}/alloy/values.yaml
 
@@ -113,7 +115,7 @@ releases:
       component: adguard
     namespace: adguard
     chart: bjw-s/app-template
-    version: "~4.6.0"
+    version: "5.1.0"
     values:
       - {{ .Values.valuesDir }}/adguard/values.yaml
 
@@ -123,7 +125,7 @@ releases:
       component: n8n
     namespace: n8n
     chart: bjw-s/app-template
-    version: "~4.6.0"
+    version: "5.1.0"
     values:
       - {{ .Values.valuesDir }}/n8n/values.yaml
 
@@ -133,7 +135,7 @@ releases:
       component: scrypted
     namespace: scrypted
     chart: bjw-s/app-template
-    version: "~4.6.0"
+    version: "5.1.0"
     values:
       - {{ .Values.valuesDir }}/scrypted/values.yaml
 
@@ -143,7 +145,7 @@ releases:
       component: jellyfin
     namespace: jellyfin
     chart: bjw-s/app-template
-    version: "~4.6.0"
+    version: "5.1.0"
     values:
       - {{ .Values.valuesDir }}/jellyfin/values.yaml
 
@@ -153,7 +155,7 @@ releases:
       component: homarr
     namespace: homarr
     chart: bjw-s/app-template
-    version: "~4.6.0"
+    version: "5.1.0"
     values:
       - {{ .Values.valuesDir }}/homarr/values.yaml
 

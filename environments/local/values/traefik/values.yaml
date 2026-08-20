@@ -11,6 +11,5 @@ service:
     externalIPs:
       - 192.168.0.12
 
-logs:
-  general:
-    level: INFO
+log:
+  level: INFO

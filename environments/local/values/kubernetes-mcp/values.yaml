@@ -1,6 +1,9 @@
 ingress:
   enabled: false
 
+image:
+  version: "v0.0.66"
+
 serviceAccount:
   create: true
 

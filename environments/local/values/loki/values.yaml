@@ -1,4 +1,4 @@
-deploymentMode: SingleBinary
+deploymentMode: Monolithic
 
 loki:
   commonConfig:
@@ -29,6 +29,7 @@ singleBinary:
     enabled: true
     storageClass: openebs-hostpath
     size: 2Gi
+    enableStatefulSetAutoDeletePVC: true
 
 # Disable distributed components
 read:

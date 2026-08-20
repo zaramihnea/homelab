@@ -4,7 +4,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/homarr-labs/homarr
-          tag: v1.60.0
+          tag: v1.75.0
           pullPolicy: IfNotPresent
         env:
           TZ: Europe/Bucharest

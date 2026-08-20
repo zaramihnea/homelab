@@ -1,10 +1,10 @@
-mcontrollers:w
+controllers:
   jellyfin:
     containers:
       app:
         image:
           repository: jellyfin/jellyfin
-          tag: 10.11.8
+          tag: 10.11.11
           pullPolicy: IfNotPresent
         resources:
           requests:
