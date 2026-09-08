@@ -10,12 +10,6 @@ image:
 extraArgs:
   - --allowed-hosts=grafana-mcp.home.zaramihnea.dev
 
-envValueFrom:
-  MCP_GRAFANA_SERVER_TOKEN:
-    secretKeyRef:
-      name: grafana-mcp-server-token
-      key: token
-
 service:
   port: 8000
 

@@ -48,10 +48,10 @@ prometheus:
     scrapeInterval: 30s
     resources:
       requests:
-        cpu: 10m
+        cpu: 50m
         memory: 384Mi
       limits:
-        cpu: 200m
+        cpu: 500m
         memory: 1Gi
     storageSpec:
       volumeClaimTemplate:
