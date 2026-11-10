@@ -69,6 +69,10 @@ manifests/
   cert-manager/
     cluster-issuer.yaml           # Let's Encrypt ClusterIssuer
     wildcard-certificate.yaml     # Wildcard TLS cert
+  nas-cert/
+    namespace.yaml                # nas-cert namespace
+    certificate.yaml              # Dedicated cert for nas.zaramihnea.dev (pulled by the Synology NAS)
+    rbac.yaml                     # ServiceAccount/Role/token limited to get Secret nas-tls
   keda/
     reference-grant.yaml          # ReferenceGrant allowing HTTPRoutes to reference KEDA services
   jellyfin/

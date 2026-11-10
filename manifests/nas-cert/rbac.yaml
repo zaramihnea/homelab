@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nas-cert-reader
+  namespace: nas-cert
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nas-cert-reader
+  namespace: nas-cert
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["nas-tls"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nas-cert-reader
+  namespace: nas-cert
+subjects:
+  - kind: ServiceAccount
+    name: nas-cert-reader
+    namespace: nas-cert
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nas-cert-reader
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nas-cert-reader-token
+  namespace: nas-cert
+  annotations:
+    kubernetes.io/service-account.name: nas-cert-reader
+type: kubernetes.io/service-account-token

@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nas-tls
+  namespace: nas-cert
+spec:
+  secretName: nas-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - nas.zaramihnea.dev
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    rotationPolicy: Always
