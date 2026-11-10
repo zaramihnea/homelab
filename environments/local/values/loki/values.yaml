@@ -6,6 +6,12 @@ loki:
   storage:
     type: filesystem
   auth_enabled: false
+  # Loki can only expire by age. At ~6.5 MB/day, 150 days keeps the store near 1 GB (PVC is 2Gi).
+  limits_config:
+    retention_period: 3600h
+  compactor:
+    retention_enabled: true
+    delete_request_store: filesystem
   schemaConfig:
     configs:
       - from: "2024-01-01"

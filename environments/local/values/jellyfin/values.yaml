@@ -4,7 +4,7 @@ controllers:
       app:
         image:
           repository: jellyfin/jellyfin
-          tag: 10.11.11
+          tag: "12.4"
           pullPolicy: IfNotPresent
         resources:
           requests:

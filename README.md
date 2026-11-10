@@ -16,19 +16,19 @@ Three apps — **Jellyfin**, **n8n**, and **Homarr** — are configured to scale
 
 ### Always-on apps
 
-**Scrypted** runs continuously as the home automation and camera hub. **AdGuard Home** provides network-wide DNS ad blocking and also serves as the cluster's internal DNS resolver. Two **MCP servers** run as always-on services: one for Grafana and one for Kubernetes — both expose their respective APIs over the Model Context Protocol so n8n workflows can query them directly without additional credentials being embedded in workflow definitions.
+**Scrypted** runs continuously as the home automation and camera hub. **AdGuard Home** provides network-wide DNS ad blocking.
 
 ### Monitoring
 
-**Alloy** runs as a cluster-wide collector, scraping Prometheus metrics from all instrumented workloads and collecting container logs. Metrics are shipped to **Prometheus** and logs to **Loki**, both running in the `monitoring` namespace with persistent storage. **Grafana** is the single UI for both data sources and is exposed through Traefik like any other app. A homelab-specific Grafana dashboard is pre-loaded via a `ConfigMap`.
+**Prometheus** scrapes metrics from all instrumented workloads, and **Alloy** runs as a cluster-wide collector that ships container logs to **Loki**, both running in the `monitoring` namespace with persistent storage. Prometheus keeps 7 days of metrics; Loki keeps 150 days of logs (about 1 GB at the current rate). **Grafana** is the single UI for both data sources and is exposed through Traefik like any other app. A homelab-specific Grafana dashboard is pre-loaded via a `ConfigMap`.
 
 ### Storage
 
-All stateful workloads — Jellyfin, n8n, Homarr, AdGuard Home, Scrypted, Prometheus, and Loki — use **OpenEBS hostpath** `PersistentVolumeClaims`. Since this is a single-node cluster there is no need for distributed storage; hostpath provisioning gives direct access to the node filesystem with minimal overhead.
+All stateful workloads — Jellyfin, n8n, Homarr, AdGuard Home, Scrypted, Grafana, Prometheus, and Loki — use **OpenEBS hostpath** `PersistentVolumeClaims`. Jellyfin's media library is mounted directly from the host at `/data/media`. Since this is a single-node cluster there is no need for distributed storage; hostpath provisioning gives direct access to the node filesystem with minimal overhead.
 
 ### Secrets
 
-All credentials (Cloudflare API token, Grafana admin password, SMTP credentials, Homarr encryption key, Grafana MCP API key, OpenClaw gateway token) are stored as Kubernetes `Secret` objects and referenced by name in Helm values and manifests.
+All credentials (Cloudflare API token, Grafana admin password, SMTP credentials, Homarr encryption key, OpenClaw gateway token) are stored as Kubernetes `Secret` objects and referenced by name in Helm values and manifests.
 
 ## Stack
 
@@ -48,12 +48,10 @@ All credentials (Cloudflare API token, Grafana admin password, SMTP credentials,
 | App | Description |
 |---|---|
 | [Jellyfin](https://jellyfin.org/) | Media server (scales to 0 when idle, wakes on HTTP request via KEDA) |
-| [n8n](https://n8n.io/) | Workflow automation with MCP access (scales to 0 when idle, wakes on HTTP request via KEDA) |
+| [n8n](https://n8n.io/) | Workflow automation (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Homarr](https://homarr.dev/) | Dashboard (scales to 0 when idle, wakes on HTTP request via KEDA) |
 | [Scrypted](https://www.scrypted.app/) | Home automation / camera hub |
 | [AdGuard Home](https://adguard.com/adguard-home.html) | Network-wide DNS ad blocking |
-| [Grafana MCP](https://github.com/grafana/mcp-grafana) | MCP server for Grafana |
-| [Kubernetes MCP](https://github.com/manusa/kubernetes-mcp-server) | MCP server for Kubernetes |
 
 ## Structure
 
@@ -83,7 +81,6 @@ manifests/
     interceptor-route.yaml        # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
     scaled-object.yaml            # ScaledObject (min 0, max 1, 10 min cooldown)
     pvcs.yaml                     # PersistentVolumeClaims
-    daily-brief-cronjob.yaml      # CronJob that POSTs to the daily brief webhook at 07:00 EET
   homarr/
     http-route.yaml               # Gateway API HTTPRoute
     interceptor-route.yaml        # InterceptorRoute (KEDA HTTP Add-on routing + scaling metric)
@@ -99,8 +96,6 @@ manifests/
     http-route.yaml               # Gateway API HTTPRoute (Grafana)
     pvcs.yaml                     # PersistentVolumeClaims
     dashboard-homelab.yaml        # Grafana dashboard ConfigMap
-  mcp/
-    http-route.yaml               # Gateway API HTTPRoute (MCP servers)
 ```
 
 ## Secrets
@@ -113,16 +108,24 @@ All secrets are stored in Kubernetes and referenced by name — no secret values
 | `grafana-admin` | Grafana admin credentials |
 | `grafana-smtp` | Grafana SMTP password |
 | `homarr-secret` | Homarr encryption key |
-| `grafana-mcp-apikey` | Grafana API key for the MCP server |
-| `openclaw-gateway` | n8n daily brief workflow access to the OpenClaw Gateway |
+| `openclaw-gateway` | n8n access to the OpenClaw Gateway |
 
 ## Usage
 
 ```bash
-# Deploy everything
+# Deploy all Helm releases (does not apply manifests/)
 helmfile -e local apply
 
-# Deploy only infra components
+# Apply the plain manifests (routes, PVCs, certificates, KEDA objects)
+kubectl apply -R -f manifests/
+
+# Fresh cluster: releases use existingClaim, so the PVCs must exist first
+for ns in adguard monitoring n8n scrypted jellyfin homarr; do kubectl create namespace $ns; done
+for f in manifests/*/pvc*.yaml; do kubectl apply -f "$f"; done
+helmfile -e local apply
+kubectl apply -R -f manifests/
+
+# Deploy only infra components (includes AdGuard)
 helmfile -e local apply -l domain=infra
 
 # Deploy only apps

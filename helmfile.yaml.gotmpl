@@ -35,7 +35,7 @@ releases:
       component: cert-manager
     namespace: cert-manager
     chart: jetstack/cert-manager
-    version: "1.21.1"
+    version: "1.21.3"
     values:
       - {{ .Values.valuesDir }}/cert-manager/values.yaml
 
@@ -45,7 +45,7 @@ releases:
       component: traefik
     namespace: traefik
     chart: traefik/traefik
-    version: "41.2.0"
+    version: "42.3.1"
     values:
       - {{ .Values.valuesDir }}/traefik/values.yaml
 
@@ -55,7 +55,7 @@ releases:
       component: openebs
     namespace: openebs
     chart: openebs/openebs
-    version: "4.5.1"
+    version: "4.6.2"
     values:
       - {{ .Values.valuesDir }}/openebs/values.yaml
 
@@ -65,7 +65,7 @@ releases:
       component: keda
     namespace: keda
     chart: kedacore/keda
-    version: "2.20.2"
+    version: "2.21.0"
     values:
       - {{ .Values.valuesDir }}/keda/values.yaml
 
@@ -75,7 +75,7 @@ releases:
       component: keda-http-addon
     namespace: keda
     chart: kedacore/keda-add-ons-http
-    version: "0.15.0"
+    version: "0.16.0"
     values:
       - {{ .Values.valuesDir }}/keda-http-addon/values.yaml
 
@@ -85,7 +85,7 @@ releases:
       component: kube-prometheus-stack
     namespace: monitoring
     chart: prometheus-community/kube-prometheus-stack
-    version: "88.5.0"
+    version: "93.1.1"
     values:
       - {{ .Values.valuesDir }}/kube-prometheus-stack/values.yaml
 
@@ -95,7 +95,7 @@ releases:
       component: loki
     namespace: monitoring
     chart: grafana-community/loki
-    version: "18.9.1"
+    version: "21.0.0"
     values:
       - {{ .Values.valuesDir }}/loki/values.yaml
 
@@ -105,7 +105,7 @@ releases:
       component: alloy
     namespace: monitoring
     chart: grafana/alloy
-    version: "1.11.1"
+    version: "1.15.0"
     values:
       - {{ .Values.valuesDir }}/alloy/values.yaml
 
@@ -115,7 +115,7 @@ releases:
       component: adguard
     namespace: adguard
     chart: bjw-s/app-template
-    version: "5.1.0"
+    version: "5.3.0"
     values:
       - {{ .Values.valuesDir }}/adguard/values.yaml
 
@@ -125,7 +125,7 @@ releases:
       component: n8n
     namespace: n8n
     chart: bjw-s/app-template
-    version: "5.1.0"
+    version: "5.3.0"
     values:
       - {{ .Values.valuesDir }}/n8n/values.yaml
 
@@ -135,7 +135,7 @@ releases:
       component: scrypted
     namespace: scrypted
     chart: bjw-s/app-template
-    version: "5.1.0"
+    version: "5.3.0"
     values:
       - {{ .Values.valuesDir }}/scrypted/values.yaml
 
@@ -145,7 +145,7 @@ releases:
       component: jellyfin
     namespace: jellyfin
     chart: bjw-s/app-template
-    version: "5.1.0"
+    version: "5.3.0"
     values:
       - {{ .Values.valuesDir }}/jellyfin/values.yaml
 
@@ -155,26 +155,6 @@ releases:
       component: homarr
     namespace: homarr
     chart: bjw-s/app-template
-    version: "5.1.0"
+    version: "5.3.0"
     values:
       - {{ .Values.valuesDir }}/homarr/values.yaml
-
-  - name: grafana-mcp
-    labels:
-      domain: mcp
-      component: grafana-mcp
-    namespace: mcp
-    chart: grafana/grafana-mcp
-    version: "0.3.1"
-    values:
-      - {{ .Values.valuesDir }}/grafana-mcp/values.yaml
-
-  - name: kubernetes-mcp
-    labels:
-      domain: mcp
-      component: kubernetes-mcp
-    namespace: mcp
-    chart: oci://ghcr.io/containers/charts/kubernetes-mcp-server
-    version: "0.1.0"
-    values:
-      - {{ .Values.valuesDir }}/kubernetes-mcp/values.yaml

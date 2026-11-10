@@ -20,7 +20,7 @@ spec:
           requestRedirect:
             path:
               type: ReplaceFullPath
-              value: /login.html
+              replaceFullPath: /login.html
             statusCode: 302
     - backendRefs:
         - name: adguard

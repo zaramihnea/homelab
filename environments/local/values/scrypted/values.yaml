@@ -4,7 +4,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/koush/scrypted
-          tag: latest
+          tag: v0.147.0-noble-full
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -12,9 +12,9 @@ controllers:
             memory: 1Gi
           limits:
             memory: 3Gi
-        env:
-          SCRYPTED_WEBHOOK_UPDATE: http://localhost:10444/v1/update
-          SCRYPTED_WEBHOOK_UPDATE_AUTHORIZATION: Bearer env_missing_fallback
+        # needed to open /dev/dri for GPU video decoding; a hostPath mount alone gets "Operation not permitted"
+        securityContext:
+          privileged: true
 
 defaultPodOptions:
   hostNetwork: true

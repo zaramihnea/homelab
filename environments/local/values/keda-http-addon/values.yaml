@@ -1,1 +1,18 @@
-# KEDA HTTP Add-on - default install
+# Single node: one replica each and small requests (chart defaults reserve ~1.75 cores for ~15m of real use)
+operator:
+  resources:
+    requests:
+      cpu: 10m
+
+scaler:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+
+interceptor:
+  replicas:
+    min: 1
+  resources:
+    requests:
+      cpu: 10m
